@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_DB: iam, POSTGRES_USER: iam, POSTGRES_PASSWORD: iam-local-only }
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U iam"], interval: 5s, timeout: 3s, retries: 15 }
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.1
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin-local-only
+      KC_HOSTNAME: http://keycloak:8080
+    ports: ["8081:8080"]
+    volumes: ["./infra/keycloak/iam-realm.json:/opt/keycloak/data/import/iam-realm.json:ro"]
+  app:
+    build: .
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/iam
+      DB_USER: iam
+      DB_PASSWORD: iam-local-only
+      OIDC_ISSUER: http://keycloak:8080/realms/iam
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      keycloak: { condition: service_started }
+    healthcheck: { test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"], interval: 10s, timeout: 3s, retries: 12 }
+volumes: { postgres-data: {} }
