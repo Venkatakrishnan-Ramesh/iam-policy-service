@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/iam}
+    username: ${DB_USER:iam}
+    password: ${DB_PASSWORD:iam-local-only}
+  jpa:
+    hibernate.ddl-auto: validate
+    open-in-view: false
+  security.oauth2.resourceserver.jwt:
+    issuer-uri: ${OIDC_ISSUER:http://localhost:8081/realms/iam}
+server:
+  port: ${PORT:8080}
+  error.include-message: never
+management:
+  endpoints.web.exposure.include: health,info,prometheus
+  endpoint.health.probes.enabled: true
