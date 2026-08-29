@@ -19,7 +19,7 @@ public class SecurityConfig {
       .oauth2ResourceServer(o -> o.jwt(j -> j.jwtAuthenticationConverter(jwtConverter()))).build();
   }
 
-  @Bean Converter<Jwt, AbstractAuthenticationToken> jwtConverter() {
+  private Converter<Jwt, AbstractAuthenticationToken> jwtConverter() {
     return jwt -> {
       Set<SimpleGrantedAuthority> authorities = new HashSet<>();
       String scope = jwt.getClaimAsString("scope");
