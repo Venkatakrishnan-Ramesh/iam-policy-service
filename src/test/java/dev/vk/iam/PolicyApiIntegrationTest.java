@@ -21,9 +21,9 @@ class PolicyApiIntegrationTest {
  @DynamicPropertySource static void db(DynamicPropertyRegistry r){r.add("spring.datasource.url",postgres::getJdbcUrl);r.add("spring.datasource.username",postgres::getUsername);r.add("spring.datasource.password",postgres::getPassword);}
  @Autowired MockMvc mvc;
  @Test void adminCanCreatePolicyAndAuthenticatedCallerCanDecide() throws Exception {
-   String policy="""{"name":"platform-read","effect":"ALLOW","priority":100,"roles":["engineer"],"actions":["read"],"resourcePattern":"document/*","conditions":{"department":"platform"},"enabled":true}""";
+   String policy="{\"name\":\"platform-read\",\"effect\":\"ALLOW\",\"priority\":100,\"roles\":[\"engineer\"],\"actions\":[\"read\"],\"resourcePattern\":\"document/*\",\"conditions\":{\"department\":\"platform\"},\"enabled\":true}";
    mvc.perform(post("/api/v1/policies").with(jwt().authorities(new SimpleGrantedAuthority("ROLE_policy-admin"))).contentType(MediaType.APPLICATION_JSON).content(policy)).andExpect(status().isCreated());
-   String request="""{"subject":"alice","roles":["engineer"],"action":"read","resource":"document/42","attributes":{"department":"platform"}}""";
+   String request="{\"subject\":\"alice\",\"roles\":[\"engineer\"],\"action\":\"read\",\"resource\":\"document/42\",\"attributes\":{\"department\":\"platform\"}}";
    mvc.perform(post("/api/v1/decisions").with(jwt()).contentType(MediaType.APPLICATION_JSON).content(request)).andExpect(status().isOk()).andExpect(jsonPath("$.allowed").value(true));
  }
  @Test void callerWithoutAdminRoleCannotManagePolicies() throws Exception {mvc.perform(get("/api/v1/policies").with(jwt())).andExpect(status().isForbidden());}
