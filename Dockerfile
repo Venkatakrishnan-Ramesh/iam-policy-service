@@ -4,7 +4,7 @@ COPY pom.xml .
 COPY src src
 RUN mvn -B -ntp package -DskipTests
 
-FROM gcr.io/distroless/java17-debian12:nonroot
+FROM cgr.dev/chainguard/jre:latest
 WORKDIR /app
 COPY --from=build /workspace/target/iam-policy-service-*.jar app.jar
 USER nonroot:nonroot
