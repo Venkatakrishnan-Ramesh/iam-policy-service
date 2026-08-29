@@ -11,7 +11,7 @@ A deployable Spring Boot policy decision point (PDP) that validates OIDC access 
 - Default-deny and explicit-deny-overrides policy semantics
 - PostgreSQL, JPA, Flyway migrations, and decision audit records
 - JUnit 5, Mockito, Spring Security tests, and Testcontainers
-- Multi-stage non-root Docker image and Docker Compose
+- Multi-stage distroless, non-root Docker image and Docker Compose
 - GitHub Actions test, coverage, image build, and vulnerability scan
 - STRIDE threat model and k6 performance test
 
