@@ -23,3 +23,4 @@ jobs:
           image: "iam-policy-service:${{ github.sha }}"
           fail-build: true
           severity-cutoff: high
+          output-format: table
